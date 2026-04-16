@@ -1,12 +1,29 @@
-import { Typography, Box } from "@mui/material";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import LoginPage from "@pages/auth/LoginPage";
+import ProtectedRoute from "@components/ProtectedRoute";
 
 const App = () => {
   return (
-    <Box sx={{ p: 4 }}>
-      <Typography variant="h4" color="primary">
-        TimeTrackr
-      </Typography>
-    </Box>
+    <Router>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute>
+              <div>Home Page — coming soon</div>
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </Router>
   );
 };
 
