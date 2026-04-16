@@ -5,6 +5,8 @@ import {
   Navigate,
 } from "react-router-dom";
 import LoginPage from "@pages/auth/LoginPage";
+import HomePage from "@pages/home/HomePage";
+import DashboardPage from "@pages/dashboard/DashboardPage";
 import ProtectedRoute from "@components/ProtectedRoute";
 
 const App = () => {
@@ -17,7 +19,15 @@ const App = () => {
           path="/home"
           element={
             <ProtectedRoute>
-              <div>Home Page — coming soon</div>
+              <HomePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
             </ProtectedRoute>
           }
         />
