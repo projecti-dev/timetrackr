@@ -3,9 +3,9 @@ import { RootState } from "../index";
 
 export const selectSessionState = (state: RootState) => state.session;
 
-export const selectActiveSession = createSelector(
+export const selectEntries = createSelector(
   [selectSessionState],
-  (session) => session.activeSession,
+  (session) => session.entries,
 );
 
 export const selectStats = createSelector(
