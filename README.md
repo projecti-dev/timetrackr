@@ -14,7 +14,6 @@ A full-stack daily hours tracking web application built with React, TypeScript, 
 ## Tech Stack
 
 ### Frontend
-
 - React 18 + TypeScript
 - Vite
 - Material UI (MUI) v5
@@ -24,7 +23,6 @@ A full-stack daily hours tracking web application built with React, TypeScript, 
 - Day.js
 
 ### Backend
-
 - NestJS
 - PostgreSQL + TypeORM
 - JWT Authentication
@@ -33,7 +31,6 @@ A full-stack daily hours tracking web application built with React, TypeScript, 
 ## Getting Started
 
 ### Prerequisites
-
 - Node.js 18+
 - PostgreSQL
 
@@ -78,13 +75,13 @@ Frontend runs on `http://localhost:5173`
 
 ## API Endpoints
 
-| Method | Endpoint            | Description                     |
-| ------ | ------------------- | ------------------------------- |
-| POST   | /auth/login         | Login and get JWT token         |
-| POST   | /sessions/entry     | Add a new time entry            |
-| GET    | /sessions/entries   | Get all entries for user        |
-| DELETE | /sessions/entry/:id | Delete an entry                 |
-| GET    | /sessions/stats     | Get daily/weekly/monthly totals |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | /auth/login | Login and get JWT token |
+| POST | /sessions/entry | Add a new time entry |
+| GET | /sessions/entries | Get all entries for user |
+| DELETE | /sessions/entry/:id | Delete an entry |
+| GET | /sessions/stats | Get daily/weekly/monthly totals |
 
 ## Related Repository
 
