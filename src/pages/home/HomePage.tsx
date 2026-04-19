@@ -8,11 +8,9 @@ import {
   IconButton,
   Paper,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { Delete as DeleteIcon } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs, { Dayjs } from "dayjs";
 import { logout } from "@reducers/authReducer";
@@ -34,6 +32,18 @@ import {
   formatTimeLabel,
 } from "@utils/timeUtils";
 
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  padding: "10px 14px",
+  fontSize: "0.95rem",
+  fontFamily: '"DM Sans", sans-serif',
+  border: "1px solid #ecddd3",
+  borderRadius: "10px",
+  backgroundColor: "#fdf8f4",
+  color: "#3d2e26",
+  outline: "none",
+};
+
 const HomePage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector(selectUser);
@@ -41,7 +51,7 @@ const HomePage: React.FC = () => {
   const isLoading = useSelector(selectSessionLoading);
   const error = useSelector(selectSessionError);
 
-  const [date, setDate] = useState<Dayjs | null>(dayjs());
+  const [date, setDate] = useState<Dayjs | null>(null);
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [formError, setFormError] = useState("");
@@ -64,6 +74,7 @@ const HomePage: React.FC = () => {
       }),
     );
     if (addEntryAction.fulfilled.match(result)) {
+      setDate(null);
       setStartTime("");
       setEndTime("");
     }
@@ -75,7 +86,6 @@ const HomePage: React.FC = () => {
 
   const handleLogout = () => dispatch(logout());
 
-  // Group entries by date
   const grouped = entries.reduce<Record<string, typeof entries>>(
     (acc, entry) => {
       if (!acc[entry.date]) acc[entry.date] = [];
@@ -85,7 +95,6 @@ const HomePage: React.FC = () => {
     {},
   );
 
-  // Today's total
   const todayStr = dayjs().format("YYYY-MM-DD");
   const todayTotal = (grouped[todayStr] || []).reduce(
     (sum, e) => sum + e.durationMinutes,
@@ -162,15 +171,27 @@ const HomePage: React.FC = () => {
           </Typography>
 
           <Stack spacing={2.5}>
-            <DatePicker
-              label="Date"
-              value={date}
-              onChange={(val: Dayjs | null) => setDate(val)}
-              renderInput={(params) => (
-                <TextField {...params} fullWidth size="small" />
-              )}
-            />
+            {/* Date input */}
+            <Box>
+              <Typography
+                variant="caption"
+                color="text.disabled"
+                display="block"
+                mb={0.5}
+              >
+                Date
+              </Typography>
+              <input
+                type="date"
+                value={date ? date.format("YYYY-MM-DD") : ""}
+                onChange={(e) =>
+                  setDate(e.target.value ? dayjs(e.target.value) : null)
+                }
+                style={inputStyle}
+              />
+            </Box>
 
+            {/* Start and End time */}
             <Stack direction="row" spacing={2}>
               <Box sx={{ flex: 1 }}>
                 <Typography
@@ -185,17 +206,7 @@ const HomePage: React.FC = () => {
                   type="time"
                   value={startTime}
                   onChange={(e) => setStartTime(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "10px 14px",
-                    fontSize: "0.95rem",
-                    fontFamily: '"DM Sans", sans-serif',
-                    border: "1px solid #ecddd3",
-                    borderRadius: "10px",
-                    backgroundColor: "#fdf8f4",
-                    color: "#3d2e26",
-                    outline: "none",
-                  }}
+                  style={inputStyle}
                 />
               </Box>
               <Box sx={{ flex: 1 }}>
@@ -211,17 +222,7 @@ const HomePage: React.FC = () => {
                   type="time"
                   value={endTime}
                   onChange={(e) => setEndTime(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "10px 14px",
-                    fontSize: "0.95rem",
-                    fontFamily: '"DM Sans", sans-serif',
-                    border: "1px solid #ecddd3",
-                    borderRadius: "10px",
-                    backgroundColor: "#fdf8f4",
-                    color: "#3d2e26",
-                    outline: "none",
-                  }}
+                  style={inputStyle}
                 />
               </Box>
             </Stack>
@@ -274,7 +275,7 @@ const HomePage: React.FC = () => {
           </Paper>
         )}
 
-        {/* Entries list grouped by date */}
+        {/* Entries list */}
         {Object.keys(grouped).length === 0 ? (
           <Typography
             variant="body2"
@@ -286,93 +287,92 @@ const HomePage: React.FC = () => {
           </Typography>
         ) : (
           <Stack spacing={3}>
-            {Object.entries(grouped).map(([dateStr, dayEntries]) => {
-              const dayTotal = dayEntries.reduce(
-                (sum, e) => sum + e.durationMinutes,
-                0,
-              );
-              return (
-                <Box key={dateStr}>
-                  {/* Date header */}
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      mb: 1.5,
-                    }}
-                  >
-                    <Typography
-                      variant="body2"
-                      fontWeight={600}
-                      color="text.secondary"
-                    >
-                      {formatDateLabel(dateStr)}
-                    </Typography>
-                    <Typography
-                      variant="body2"
+            {Object.entries(grouped)
+              .sort(([a], [b]) => b.localeCompare(a))
+              .map(([dateStr, dayEntries]) => {
+                const dayTotal = dayEntries.reduce(
+                  (sum, e) => sum + e.durationMinutes,
+                  0,
+                );
+                return (
+                  <Box key={dateStr}>
+                    <Box
                       sx={{
-                        fontFamily: '"Lora", serif',
-                        color: "primary.dark",
-                        fontWeight: 600,
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        mb: 1.5,
                       }}
                     >
-                      {formatMinutes(dayTotal)}
-                    </Typography>
-                  </Box>
-
-                  {/* Entries for this date */}
-                  <Stack spacing={1}>
-                    {dayEntries.map((entry) => (
-                      <Paper
-                        key={entry.id}
-                        elevation={0}
+                      <Typography
+                        variant="body2"
+                        fontWeight={600}
+                        color="text.secondary"
+                      >
+                        {formatDateLabel(dateStr)}
+                      </Typography>
+                      <Typography
+                        variant="body2"
                         sx={{
-                          border: "1px solid",
-                          borderColor: "divider",
-                          borderRadius: 3,
-                          px: 2,
-                          py: 1.5,
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
+                          fontFamily: '"Lora", serif',
+                          color: "primary.dark",
+                          fontWeight: 600,
                         }}
                       >
-                        <Box>
-                          <Typography
-                            variant="body2"
-                            color="text.primary"
-                            fontWeight={500}
-                          >
-                            {formatTimeLabel(entry.startTime)} →{" "}
-                            {formatTimeLabel(entry.endTime)}
-                          </Typography>
-                          <Typography variant="caption" color="text.disabled">
-                            {formatMinutes(entry.durationMinutes)}
-                          </Typography>
-                        </Box>
-                        <IconButton
-                          size="small"
-                          onClick={() => handleDelete(entry.id)}
+                        {formatMinutes(dayTotal)}
+                      </Typography>
+                    </Box>
+
+                    <Stack spacing={1}>
+                      {dayEntries.map((entry) => (
+                        <Paper
+                          key={entry.id}
+                          elevation={0}
                           sx={{
-                            color: "text.disabled",
-                            "&:hover": { color: "error.main" },
+                            border: "1px solid",
+                            borderColor: "divider",
+                            borderRadius: 3,
+                            px: 2,
+                            py: 1.5,
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
                           }}
                         >
-                          <DeleteOutlineIcon fontSize="small" />
-                        </IconButton>
-                      </Paper>
-                    ))}
-                  </Stack>
+                          <Box>
+                            <Typography
+                              variant="body2"
+                              color="text.primary"
+                              fontWeight={500}
+                            >
+                              {formatTimeLabel(entry.startTime)} →{" "}
+                              {formatTimeLabel(entry.endTime)}
+                            </Typography>
+                            <Typography variant="caption" color="text.disabled">
+                              {formatMinutes(entry.durationMinutes)}
+                            </Typography>
+                          </Box>
+                          <IconButton
+                            size="small"
+                            onClick={() => handleDelete(entry.id)}
+                            sx={{
+                              color: "text.disabled",
+                              "&:hover": { color: "error.main" },
+                            }}
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </Paper>
+                      ))}
+                    </Stack>
 
-                  <Divider sx={{ mt: 2 }} />
-                </Box>
-              );
-            })}
+                    <Divider sx={{ mt: 2 }} />
+                  </Box>
+                );
+              })}
           </Stack>
         )}
 
-        {/* Link to dashboard */}
         <Box textAlign="center" mt={5}>
           <Button
             variant="text"
