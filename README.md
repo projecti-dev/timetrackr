@@ -1,73 +1,95 @@
-# React + TypeScript + Vite
+# TimeTrackr ⏱️
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack daily hours tracking web application built with React, TypeScript, and NestJS.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- 🔐 **Authentication** — Secure login with JWT tokens
+- 📅 **Log Hours** — Select any date and manually enter start/end times
+- 📊 **Daily, Weekly & Monthly Stats** — See your totals at a glance
+- 📜 **History** — All entries grouped by date with individual durations
+- 🗑️ **Delete Entries** — Remove any logged entry
+- 👤 **Per-user data** — Each user sees only their own entries
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Frontend
 
-## Expanding the ESLint configuration
+- React 18 + TypeScript
+- Vite
+- Material UI (MUI) v5
+- Redux Toolkit + Reselect
+- React Router v6
+- Axios
+- Day.js
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Backend
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- NestJS
+- PostgreSQL + TypeORM
+- JWT Authentication
+- REST API
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Getting Started
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Prerequisites
+
+- Node.js 18+
+- PostgreSQL
+
+### Backend Setup
+
+```bash
+cd timetrackr-api
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Create a `.env` file in `timetrackr-api/` — see `.env.example` for required variables.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Create the database:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+psql -U postgres -c "CREATE DATABASE timetrackr;"
 ```
+
+Seed default users:
+
+```bash
+npx ts-node src/seed.ts
+```
+
+Start the backend:
+
+```bash
+npm run start:dev
+```
+
+Backend runs on `http://localhost:3001`
+
+### Frontend Setup
+
+```bash
+cd timetrackr
+npm install
+npm run dev
+```
+
+Frontend runs on `http://localhost:5173`
+
+## API Endpoints
+
+| Method | Endpoint            | Description                     |
+| ------ | ------------------- | ------------------------------- |
+| POST   | /auth/login         | Login and get JWT token         |
+| POST   | /sessions/entry     | Add a new time entry            |
+| GET    | /sessions/entries   | Get all entries for user        |
+| DELETE | /sessions/entry/:id | Delete an entry                 |
+| GET    | /sessions/stats     | Get daily/weekly/monthly totals |
+
+## Related Repository
+
+- **Backend:** [timetrackr-api](https://github.com/projecti-dev/timetrackr-api)
+
+## Author
+
+**projecti-dev**
