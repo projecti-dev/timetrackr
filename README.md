@@ -87,6 +87,4 @@ Frontend runs on `http://localhost:5173`
 
 - **Backend:** [timetrackr-api](https://github.com/projecti-dev/timetrackr-api)
 
-## Author
 
-**projecti-dev**
